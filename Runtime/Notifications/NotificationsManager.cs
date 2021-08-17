@@ -25,6 +25,7 @@ namespace Drolegames.Notifications
         // Minimum amount of time that a notification should be into the future before it's queued when we background.
         private static readonly TimeSpan MinimumNotificationTime = new TimeSpan(0, 0, 2);
 
+
         [Flags]
         public enum OperatingMode
         {
