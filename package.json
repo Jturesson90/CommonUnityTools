@@ -1,8 +1,8 @@
 {
   "name": "com.drolegames.commonunitytools",
   "version": "0.0.1",
-  "displayName": "Entity Tween",
-  "description": "Common tools ",
+  "displayName": "Drolegames Common Unity Tools",
+  "description": "Common tools shared between different projects",
   "unity": "2020.1",
   "dependencies": {
     "com.unity.ads": "3.7.5"
@@ -17,5 +17,6 @@
     "tools",
     "drolegames"
   ],
-  "samples": []
+  "samples": [],
+  "type": "module"
 }

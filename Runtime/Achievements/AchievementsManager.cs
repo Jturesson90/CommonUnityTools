@@ -1,15 +1,16 @@
 ﻿//#define DEBUG_ACHIEVEMENTS
-using System.Collections.Generic;
-using UnityEngine;
-using System;
-using System.Linq;
-using UnityEngine.SocialPlatforms;
-using Drolegames.SocialService;
-
 namespace Drolegames.Achievements
 {
+    using System;
+    using System.Linq;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.SocialPlatforms;
+    using Drolegames.SocialService;
+
     public class AchievementsManager : MonoBehaviour
     {
+
         private PendingAchievements _pendingAchievements;
         private Dictionary<string, IAchievement> unlockedAchievements = new Dictionary<string, IAchievement>();
         private Dictionary<string, IAchievement> allAchievements = new Dictionary<string, IAchievement>();

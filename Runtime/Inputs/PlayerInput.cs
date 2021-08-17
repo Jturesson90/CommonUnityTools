@@ -1,17 +1,17 @@
-﻿namespace Drolegames.Inputs
-{
-    using System;
-    using System.Collections.Generic;
-    using Drolegames.Utils;
-    using UnityEngine;
-    using UnityEngine.EventSystems;
+﻿using System;
+using System.Collections.Generic;
+using Drolegames.Utils;
+using UnityEngine;
+using UnityEngine.EventSystems;
 
+namespace Drolegames.Inputs
+{
     public class PlayerInput : Singleton<PlayerInput>
     {
         [Header("Manager")]
         [SerializeField] private PointManager manager;
 
-        [Header("Click and Secondary will be triggered by IClickable")]
+        [Tooltip("Click and Secondary will be triggered by IClickable")]
         [SerializeField] private LayerMask _layerMaskToHit = -1;
 
         public event EventHandler<OnDraggedArgs> OnDragged;

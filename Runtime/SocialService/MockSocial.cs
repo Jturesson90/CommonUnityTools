@@ -1,19 +1,13 @@
-﻿using DG.Tweening;
-using Drolegames.Save;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEditor;
-using UnityEngine;
-using UnityEngine.SocialPlatforms;
-using UnityEngine.SocialPlatforms.Impl;
-
-namespace Drolegames.SocialService
+﻿namespace Drolegames.SocialService
 {
+    using Drolegames.IO;
+    using System;
+    using System.Collections;
+    using System.IO;
+    using System.Threading.Tasks;
+    using UnityEngine;
+    using UnityEngine.SocialPlatforms;
+
     public class MockSocial : ISocialService
     {
         public RuntimePlatform Platform => RuntimePlatform.WindowsEditor;
@@ -37,10 +31,7 @@ namespace Drolegames.SocialService
 
         public void Login(Action<bool> callback)
         {
-            Sequence mySequence = DOTween.Sequence();
-            mySequence
-                .AppendInterval(1.5f)
-                .AppendCallback(() => callback?.Invoke(IsLoggedIn = true));
+            UseDelay(1.5f, () => callback?.Invoke(IsLoggedIn = true));
         }
 
         public void Logout(Action<bool> callback)
@@ -52,37 +43,30 @@ namespace Drolegames.SocialService
         public void SaveGame(byte[] data, TimeSpan playedTime, Action<bool> callback)
         {
             CloudData = data;
-            var path = $"{Application.persistentDataPath}/mock.txt";
-            File.WriteAllText(path, GameSaveData.FromBytes(data).ToString());
-
-            Sequence mySequence = DOTween.Sequence();
-            mySequence
-              .AppendInterval(1.5f)
-              .AppendCallback(() => callback?.Invoke(true));
+            bool success = FileManager.WriteToFile("mock.txt", System.Text.ASCIIEncoding.Default.GetString(data));
+            UseDelay(1.5f, () => callback?.Invoke(success));
         }
 
         public void LoadFromCloud(Action<bool> callback)
         {
-            bool success = false;
-            var path = $"{Application.persistentDataPath}/mock.txt";
-            if (!File.Exists(path))
+            bool success = FileManager.LoadFromFile("mock.txt", out string json);
+            if (success)
             {
-                File.Create(path);
+                CloudData = System.Text.ASCIIEncoding.Default.GetBytes(json);
             }
 
-            var jsonFromCloud = File.ReadAllText(path);
-
-            GameSaveData a = GameSaveData.FromString(jsonFromCloud);
-            if (a != null)
-            {
-                CloudData = a.ToBytes();
-                success = true;
-            }
             Debug.Log("Mock Cloud Load Success? " + success);
-            Sequence mySequence = DOTween.Sequence();
-            mySequence
-              .AppendInterval(1.5f)
-              .AppendCallback(() => callback?.Invoke(success));
+            UseDelay(1.5f, () => callback?.Invoke(success));
+        }
+
+
+        void UseDelay(float time, Action callback)
+        {
+            Task.Run(async delegate
+            {
+                await Task.Delay(TimeSpan.FromSeconds(time));
+                callback?.Invoke();
+            });
         }
 
         public void UnlockAchievement(string achievementId, Action<bool> callback)

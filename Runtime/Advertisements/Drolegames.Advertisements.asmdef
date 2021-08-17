@@ -1,0 +1,17 @@
+{
+    "name": "Drolegames.Advertisements",
+    "rootNamespace": "",
+    "references": [
+        "GUID:9c57e2db78c8def44a0c9b630c0f2721",
+        "GUID:ff6de30450f3748908ff580f6ec64d9a"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

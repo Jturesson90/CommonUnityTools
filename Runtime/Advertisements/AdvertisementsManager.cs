@@ -1,14 +1,14 @@
-﻿using Drolegames.Utils;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.Advertisements;
-using UnityEngine.Events;
-using UnityEngine.SceneManagement;
-
-namespace Drolegames.Advertisements
+﻿namespace Drolegames.Advertisements
 {
+    using System;
+    using Drolegames.Utils;
+    using System.Collections;
+    using System.Collections.Generic;
+    using UnityEngine;
+    using UnityEngine.Advertisements;
+    using UnityEngine.Events;
+    using UnityEngine.SceneManagement;
+
     public class AdvertisementsManager : MonoBehaviour, IUnityAdsListener
     {
         public string iOSGameId = string.Empty;

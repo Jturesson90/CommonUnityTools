@@ -1,15 +1,13 @@
-﻿using System;
-using UnityEngine;
-using Drolegames.Utils;
-using Drolegames.GameMenu.ScriptableObjects;
-using Drolegames.Save;
-using UnityEngine.SocialPlatforms;
-
-namespace Drolegames.SocialService
+﻿namespace Drolegames.SocialService
 {
+    using System;
+    using UnityEngine;
+    using UnityEngine.SocialPlatforms;
+    using Drolegames.Utils;
+    using Drolegames.IO;
+
     public class SocialManager : Singleton<SocialManager>
     {
-        public GameData_SO gameSaveData;
         private ISocialService socialService;
         public static event EventHandler<SocialManagerArgs> LoggedInChanged;
         public static event EventHandler<bool> LoggingInPendingChanged;
@@ -89,26 +87,24 @@ namespace Drolegames.SocialService
         }
         public void SaveGame(bool manual = false)
         {
-            if (gameSaveData && CloudSaveEnabled)
+            if (GameDataManager.IsInitialized && CloudSaveEnabled)
             {
                 UploadPending = true;
-                var saveData = gameSaveData.GetSaveData();
                 TimeSpan timePlayed;
                 try
                 {
-                    timePlayed = TimeSpan.FromSeconds(saveData.totalPlayingTime);
+                    timePlayed = TimeSpan.FromSeconds(GameDataManager.Current.GameData.totalPlayingTime);
                 }
                 catch
                 {
                     timePlayed = TimeSpan.FromSeconds(3600);
                 }
 
-                socialService.SaveGame(saveData.ToBytes(), timePlayed, (bool s) =>
+                socialService.SaveGame(GameDataManager.Current.GameData.ToBytes(), timePlayed, (bool success) =>
                 {
                     UploadPending = false;
-                    if (s)
+                    if (success)
                     {
-                        Debug.LogWarning("SocialManager SaveGame Sucess");
                         OnUploadComplete?.Invoke(this, new OnUploadCompleteArgs() { Manual = manual });
                     }
                     else
@@ -128,11 +124,7 @@ namespace Drolegames.SocialService
                 if (success)
                 {
                     if (socialService != null)
-                    {
-                        Debug.LogWarning("SocialManager LoadFromCloud CloudData? " + socialService.CloudData + "  " + GameSaveData.FromBytes(socialService.CloudData).ToString());
-                        if (gameSaveData)
-                            gameSaveData.MergeSaveData(GameSaveData.FromBytes(socialService.CloudData));
-                    }
+                    { }
                     else
                     {
                         Debug.LogError("SocialManager LoadFromCloud socialService is null wtf?");
@@ -158,32 +150,15 @@ namespace Drolegames.SocialService
         public void IncrementAchievement(string achivementId, double steps, Action<bool> callback) => socialService.IncrementAchievement(achivementId, steps, callback);
         public void LoadAchievements(Action<IAchievement[]> callback) => socialService.LoadAchievements(callback);
         public void ShowAchievementsUI() => socialService.ShowAchievementsUI();
-        private void OnEnable()
-        {
-            if (gameSaveData)
-            {
-                gameSaveData.SavedToDisk += GameSaveData_SavedToDisk;
-            }
-        }
-
-        private void GameSaveData_SavedToDisk(object sender, EventArgs e)
-        {
-            SaveGame();
-        }
-        private void OnDisable()
-        {
-            if (gameSaveData)
-            {
-                gameSaveData.SavedToDisk -= GameSaveData_SavedToDisk;
-            }
-        }
     }
+
     public class SocialManagerArgs : EventArgs
     {
         public bool IsLoggedIn { get; set; }
         public RuntimePlatform Platform { get; set; }
         public string Name { get; internal set; }
     }
+
     public class OnUploadCompleteArgs : EventArgs
     {
         public bool Manual { get; set; }
